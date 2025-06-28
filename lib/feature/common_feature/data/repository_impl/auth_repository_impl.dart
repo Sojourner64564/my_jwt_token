@@ -49,8 +49,33 @@ class AuthRepositoryImpl implements AuthRepository {
       throw ServerFailure();
     } else {
       final Map<String, dynamic> data = response.data;
+
+      print(data['jwt']);
+      print('----------------------');
+      print(data['refresh_token']);
+
       securityStorageClient.write(StorageKeys.jwtTokenKey, data['jwt']);
-      securityStorageClient.write(StorageKeys.jwtTokenKey, data['refresh_token']);
+      securityStorageClient.write(StorageKeys.refreshTokenKey, data['refresh_token']);
+    }
+  }
+
+  @override
+  Future<void> fetchRefreshToken(String token) async {
+    if (!await networkInfo.isConnected) {
+      throw NoInternetFailure();
+    }
+
+    final response = await dioClient.refreshToken(token);
+
+    if (response.statusCode == 400) {
+      throw UserDoesNotExistFailure();
+    }
+    if (response.statusCode == 502) {
+      throw ServerFailure();
+    } else {
+      final Map<String, dynamic> data = response.data;
+      securityStorageClient.write(StorageKeys.jwtTokenKey, data['jwt']);
+      securityStorageClient.write(StorageKeys.refreshTokenKey, data['refresh_token']);
     }
   }
 }
