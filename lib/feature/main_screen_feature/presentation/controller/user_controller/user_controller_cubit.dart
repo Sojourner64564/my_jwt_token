@@ -18,7 +18,6 @@ class UserControllerCubit extends Cubit<UserControllerState> {
     await fetchUserIdUseCase.call().then((data){
       emit(UserControllerLoaded(data));
     }).catchError((error, stackTrace){
-      print(error);
       if(error is NoInternetFailure){
         emit(UserControllerError('Нет интернета'));
       }

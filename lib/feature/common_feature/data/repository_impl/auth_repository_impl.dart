@@ -50,10 +50,6 @@ class AuthRepositoryImpl implements AuthRepository {
     } else {
       final Map<String, dynamic> data = response.data;
 
-      print(data['jwt']);
-      print('----------------------');
-      print(data['refresh_token']);
-
       await securityStorageClient.write(StorageKeys.jwtTokenKey, data['jwt']);
       await securityStorageClient.write(StorageKeys.refreshTokenKey, data['refresh_token']);
     }

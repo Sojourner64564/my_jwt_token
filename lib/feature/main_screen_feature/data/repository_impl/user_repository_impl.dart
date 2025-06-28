@@ -29,18 +29,15 @@ class UserRepositoryImpl implements UserRepository{
     final refresh = await securityStorageRepository.read(StorageKeys.refreshTokenKey);
 
     if(jwt == null){
-      print('jwt == null');
       throw AppFailure();
     }
     if(refresh == null){
-      print('refresh == null');
       throw AppFailure();
     }
 
     final response = await dioClient.auth(jwt);
 
     if(response.statusCode == 403){
-      print('fetchUserId 403');
       await authRepository.fetchRefreshToken(refresh).catchError((error, stackTrace){
         if(error is NoInternetFailure){
           throw NoInternetFailure();
@@ -49,38 +46,31 @@ class UserRepositoryImpl implements UserRepository{
           throw UserDoesNotExistFailure();
         }
         if(error is ServerFailure){
-          print('refreshToken serverFailure');
           throw ServerFailure();
         }
       });
 
       final jwt = await securityStorageRepository.read(StorageKeys.jwtTokenKey);
       if(jwt == null){
-        print('jwt == null');
         throw AppFailure();
       }
 
       final response = await dioClient.auth(jwt);
 
       if(response.statusCode == 403){
-        print('new dioClient.auth 403');
         throw ServerFailure();
       }
       if(response.statusCode == 502){
-        print('new dioClient.auth 502');
         throw ServerFailure();
       }else{
-        print(response.data);
         final model = UserIdModel.fromJson(response.data);
         return model.toEntity();
       }
     }
 
     if(response.statusCode == 502){
-      print('dioClient.auth 502');
       throw ServerFailure();
     }else{
-      print(response.data);
 
       final model = UserIdModel.fromJson(response.data);
       return model.toEntity();
