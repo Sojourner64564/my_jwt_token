@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_jwt_token/core/injectable/injectable.dart';
-import 'package:my_jwt_token/feature/auth_screen/presentation/auth_screen.dart';
+import 'package:my_jwt_token/feature/auth_screen_feature/presentation/email_screen/email_screen.dart';
 
 void main() {
   configureDependencies();
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const AuthScreen(),
+      home: const EmailScreen(),
     );
   }
 }

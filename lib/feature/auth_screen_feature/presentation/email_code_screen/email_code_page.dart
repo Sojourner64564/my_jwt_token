@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:my_jwt_token/core/injectable/injectable.dart';
-import 'package:my_jwt_token/feature/auth_screen/presentation/controller/auth_controller_cubit.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_jwt_token/core/injectable/injectable.dart';
+import 'package:my_jwt_token/feature/auth_screen_feature/presentation/controller/code_email_controller/code_email_controller_cubit.dart';
+import 'package:my_jwt_token/feature/main_screen_feature/presentation/main_screen.dart';
 
-class AuthPage extends StatelessWidget {
-  AuthPage({super.key});
+class EmailCodePage extends StatelessWidget {
+  EmailCodePage({super.key});
 
-  final authControllerCubit = getIt<AuthControllerCubit>();
+  final codeEmailControllerCubit = getIt<CodeEmailControllerCubit>();
 
   @override
   Widget build(BuildContext context) {
@@ -25,28 +27,39 @@ class AuthPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 50),
-                Center(child: Icon(Icons.email_outlined, size: 50)),
+                Center(child: Icon(Icons.thumb_up_outlined, size: 50)),
                 SizedBox(height: 50),
-                Text('Введите почту'),
+                Text('Введите код из Email-письма'),
                 TextField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  maxLength: 255,
                   onSubmitted: (text) {
-                    authControllerCubit.login(text, () {
-                      /* Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => SecondScreen()),
-                              );*/
-                    });
-                  },
+                    codeEmailControllerCubit.confirmCode(
+                      text,
+                        (){
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MainScreen(),
+                            ),
+                              (route) => false,
+                          );
+                        }
+                    );
+                    },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black),
                     ),
                   ),
                 ),
-                BlocBuilder<AuthControllerCubit, AuthControllerState>(
-                  bloc: authControllerCubit,
+                BlocBuilder<CodeEmailControllerCubit, CodeEmailControllerState>(
+                  bloc: codeEmailControllerCubit,
                   builder: (context, state) {
-                    if (state is AuthControllerError) {
+                    if (state is CodeEmailControllerError) {
                       return Text(
                         state.error,
                         style: TextStyle(color: Colors.red),
@@ -60,10 +73,10 @@ class AuthPage extends StatelessWidget {
             ),
           ),
         ),
-        BlocBuilder<AuthControllerCubit, AuthControllerState>(
-          bloc: authControllerCubit,
+        BlocBuilder<CodeEmailControllerCubit, CodeEmailControllerState>(
+          bloc: codeEmailControllerCubit,
           builder: (context, state) {
-            if (state is AuthControllerLoading) {
+            if (state is CodeEmailControllerLoading) {
               return Visibility(
                 visible: true,
                 child: Container(

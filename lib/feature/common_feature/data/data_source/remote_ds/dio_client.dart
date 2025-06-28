@@ -11,7 +11,13 @@ class DioClient{
   );
 
   Future<Response<void>> login(String email) async{
-    return dio.post<void>(UrlLinks.baseJwtAuth+UrlLinks.authLogin, data: {'email' : email},
+    return await dio.post<void>(UrlLinks.baseJwtAuth+UrlLinks.authLogin, data: {'email' : email},
+    );
+  }
+
+  Future<Response> confirmCode(String email, int code) async{
+   return await dio.post(UrlLinks.baseJwtAuth+UrlLinks.confirmCode,
+      data: {'email' : email, 'code' : code},
     );
   }
 }

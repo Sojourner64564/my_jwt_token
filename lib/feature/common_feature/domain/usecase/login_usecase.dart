@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:my_jwt_token/core/usecase/usecase.dart';
+import 'package:my_jwt_token/core/usecase/light_usecase.dart';
 import 'package:my_jwt_token/feature/common_feature/domain/repository/auth_repository.dart';
 
 @lazySingleton
