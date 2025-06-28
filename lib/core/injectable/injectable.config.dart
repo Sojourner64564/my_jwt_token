@@ -17,8 +17,6 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
 import '../../feature/auth_screen/presentation/controller/auth_controller_cubit.dart'
     as _i43;
 import '../../feature/common_feature/data/remote_ds/dio_client.dart' as _i951;
-import '../../feature/common_feature/data/remote_ds/retrofit_remote_client.dart'
-    as _i397;
 import '../../feature/common_feature/data/repository_impl/auth_repository_impl.dart'
     as _i358;
 import '../../feature/common_feature/domain/repository/auth_repository.dart'
@@ -40,16 +38,12 @@ _i174.GetIt $initGetIt(
   gh.factory<_i973.InternetConnectionChecker>(
     () => registerModuleConnectionChecker.internetConnection,
   );
-  gh.lazySingleton<_i397.RetrofitRemoteClientInstance>(
-    () => _i397.RetrofitRemoteClientInstance(),
-  );
   gh.lazySingleton<_i951.DioClient>(() => _i951.DioClient());
   gh.lazySingleton<_i932.NetworkInfo>(
     () => _i865.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),
   );
   gh.lazySingleton<_i493.AuthRepository>(
     () => _i358.AuthRepositoryImpl(
-      gh<_i397.RetrofitRemoteClientInstance>(),
       gh<_i932.NetworkInfo>(),
       gh<_i951.DioClient>(),
     ),
