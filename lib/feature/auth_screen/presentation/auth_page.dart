@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:my_jwt_token/core/injectable/injectable.dart';
+import 'package:my_jwt_token/feature/auth_screen/presentation/controller/auth_controller_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+  AuthPage({super.key});
+
+  final authControllerCubit = getIt<AuthControllerCubit>();
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +25,17 @@ class AuthPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 50),
-                Center(child:
-                  Icon(
-                    Icons.email_outlined,
-                    size: 50,
-                  ),
-                ),
+                Center(child: Icon(Icons.email_outlined, size: 50)),
                 SizedBox(height: 50),
                 Text('Введите почту'),
                 TextField(
-                  onSubmitted: (text){
-                      print('$text');
+                  onSubmitted: (text) {
+                    authControllerCubit.login(text, () {
+                      /* Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => SecondScreen()),
+                              );*/
+                    });
                   },
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -38,18 +43,38 @@ class AuthPage extends StatelessWidget {
                     ),
                   ),
                 ),
+                BlocBuilder<AuthControllerCubit, AuthControllerState>(
+                  bloc: authControllerCubit,
+                  builder: (context, state) {
+                    if (state is AuthControllerError) {
+                      return Text(
+                        state.error,
+                        style: TextStyle(color: Colors.red),
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  },
+                ),
               ],
             ),
           ),
         ),
-        Visibility(
-          visible: false,
-          child: Container(
-            color: Colors.white.withAlpha(150),
-            child: Center(
-                child: CircularProgressIndicator(),
-            ),
-          ),
+        BlocBuilder<AuthControllerCubit, AuthControllerState>(
+          bloc: authControllerCubit,
+          builder: (context, state) {
+            if (state is AuthControllerLoading) {
+              return Visibility(
+                visible: true,
+                child: Container(
+                  color: Colors.white.withAlpha(150),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              );
+            } else {
+              return SizedBox();
+            }
+          },
         ),
       ],
     );

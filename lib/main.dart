@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:my_jwt_token/core/injectable/injectable.dart';
 import 'package:my_jwt_token/feature/auth_screen/presentation/auth_screen.dart';
 
 void main() {
+  configureDependencies();
   runApp(const MyApp());
 }
 
