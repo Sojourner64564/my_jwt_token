@@ -41,14 +41,33 @@ class UserRepositoryImpl implements UserRepository{
 
     if(response.statusCode == 403){
       print('fetchUserId 403');
-      await authRepository.fetchRefreshToken(refresh);
+      await authRepository.fetchRefreshToken(refresh).catchError((error, stackTrace){
+        if(error is NoInternetFailure){
+          throw NoInternetFailure();
+        }
+        if(error is UserDoesNotExistFailure){
+          throw UserDoesNotExistFailure();
+        }
+        if(error is ServerFailure){
+          print('refreshToken serverFailure');
+          throw ServerFailure();
+        }
+      });
+
+      final jwt = await securityStorageRepository.read(StorageKeys.jwtTokenKey);
+      if(jwt == null){
+        print('jwt == null');
+        throw AppFailure();
+      }
 
       final response = await dioClient.auth(jwt);
 
       if(response.statusCode == 403){
+        print('new dioClient.auth 403');
         throw ServerFailure();
       }
       if(response.statusCode == 502){
+        print('new dioClient.auth 502');
         throw ServerFailure();
       }else{
         print(response.data);
@@ -56,7 +75,9 @@ class UserRepositoryImpl implements UserRepository{
         return model.toEntity();
       }
     }
+
     if(response.statusCode == 502){
+      print('dioClient.auth 502');
       throw ServerFailure();
     }else{
       print(response.data);

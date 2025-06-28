@@ -54,8 +54,8 @@ class AuthRepositoryImpl implements AuthRepository {
       print('----------------------');
       print(data['refresh_token']);
 
-      securityStorageClient.write(StorageKeys.jwtTokenKey, data['jwt']);
-      securityStorageClient.write(StorageKeys.refreshTokenKey, data['refresh_token']);
+      await securityStorageClient.write(StorageKeys.jwtTokenKey, data['jwt']);
+      await securityStorageClient.write(StorageKeys.refreshTokenKey, data['refresh_token']);
     }
   }
 
@@ -74,8 +74,8 @@ class AuthRepositoryImpl implements AuthRepository {
       throw ServerFailure();
     } else {
       final Map<String, dynamic> data = response.data;
-      securityStorageClient.write(StorageKeys.jwtTokenKey, data['jwt']);
-      securityStorageClient.write(StorageKeys.refreshTokenKey, data['refresh_token']);
+      await securityStorageClient.write(StorageKeys.jwtTokenKey, data['jwt']);
+      await securityStorageClient.write(StorageKeys.refreshTokenKey, data['refresh_token']);
     }
   }
 }
