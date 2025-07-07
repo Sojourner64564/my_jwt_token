@@ -73,7 +73,7 @@ class DioClient{
     );
   }
 
-  Future<Response> auth(String jwt) async{
+  Future<Response> auth(String? jwt) async{
     return await dio.get(UrlLinks.baseJwtAuth+UrlLinks.auth,
       options: Options(
         headers: {

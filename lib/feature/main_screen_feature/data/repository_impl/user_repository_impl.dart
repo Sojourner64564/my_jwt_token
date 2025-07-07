@@ -26,8 +26,9 @@ class UserRepositoryImpl implements UserRepository{
     }
 
     final jwt = await securityStorage.read(StorageKeys.jwtTokenKey);
+    final refresh = await securityStorage.read(StorageKeys.refreshTokenKey);
 
-    if(jwt == null){
+    if(refresh == null){
       throw AppFailure();
     }
 
