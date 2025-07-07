@@ -17,5 +17,7 @@ class SecurityStorageClient{
     return await storage.read(key: key);
   }
 
-
+  Future<bool> contains(String key) async{
+    return await storage.containsKey(key: key);
+  }
 }
