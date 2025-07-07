@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:internet_connection_checker/internet_connection_checker.dart'
@@ -24,12 +25,8 @@ import '../../feature/common_feature/data/data_source/remote_ds/dio_client.dart'
     as _i399;
 import '../../feature/common_feature/data/repository_impl/auth_repository_impl.dart'
     as _i358;
-import '../../feature/common_feature/data/repository_impl/security_storage_repository_impl.dart'
-    as _i696;
 import '../../feature/common_feature/domain/repository/auth_repository.dart'
     as _i493;
-import '../../feature/common_feature/domain/repository/security_storage_repository.dart'
-    as _i428;
 import '../../feature/common_feature/domain/usecase/confirm_code_usecase.dart'
     as _i219;
 import '../../feature/common_feature/domain/usecase/login_usecase.dart'
@@ -42,6 +39,7 @@ import '../../feature/main_screen_feature/domain/usecase/fetch_user_id_usecase.d
     as _i688;
 import '../../feature/main_screen_feature/presentation/controller/user_controller/user_controller_cubit.dart'
     as _i258;
+import '../net_client/dio_module.dart' as _i917;
 import '../network/internet_connection_checker.dart' as _i657;
 import '../network/network_info.dart' as _i932;
 import '../network/network_info_impl.dart' as _i865;
@@ -54,16 +52,16 @@ _i174.GetIt $initGetIt(
 }) {
   final gh = _i526.GetItHelper(getIt, environment, environmentFilter);
   final registerModuleConnectionChecker = _$RegisterModuleConnectionChecker();
+  final dioModule = _$DioModule();
   gh.factory<_i973.InternetConnectionChecker>(
     () => registerModuleConnectionChecker.internetConnection,
   );
+  gh.factory<_i361.Dio>(() => dioModule.dioClient);
   gh.lazySingleton<_i703.SecurityStorageClient>(
     () => _i703.SecurityStorageClient(),
   );
-  gh.lazySingleton<_i399.DioClient>(() => _i399.DioClient());
-  gh.lazySingleton<_i428.SecurityStorageRepository>(
-    () =>
-        _i696.SecurityStorageRepositoryImpl(gh<_i703.SecurityStorageClient>()),
+  gh.lazySingleton<_i399.DioClient>(
+    () => _i399.DioClient(gh<_i361.Dio>(), gh<_i703.SecurityStorageClient>()),
   );
   gh.lazySingleton<_i932.NetworkInfo>(
     () => _i865.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),
@@ -80,7 +78,7 @@ _i174.GetIt $initGetIt(
       gh<_i932.NetworkInfo>(),
       gh<_i399.DioClient>(),
       gh<_i493.AuthRepository>(),
-      gh<_i428.SecurityStorageRepository>(),
+      gh<_i703.SecurityStorageClient>(),
     ),
   );
   gh.lazySingleton<_i219.ConfirmCodeUseCase>(
@@ -109,3 +107,5 @@ _i174.GetIt $initGetIt(
 
 class _$RegisterModuleConnectionChecker
     extends _i657.RegisterModuleConnectionChecker {}
+
+class _$DioModule extends _i917.DioModule {}
